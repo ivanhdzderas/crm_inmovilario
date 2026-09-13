@@ -1,0 +1,15 @@
+Catalogo Helper (Tests\Unit\CatalogoHelper)
+ [x] Slug elimina acentos
+ [x] Slug no contiene caracteres unicode en url
+ [x] Normalize segment decodifica porcentaje y quita acentos
+ [x] Coincide slug con variantes de acentos
+ [x] Coincide slug proyecto con prefijo desarrollo
+ [x] Urls usan slugs ascii
+ [x] Requiere redireccion canonica con acentos
+ [x] Parse payment methods
+
+Catalogo Routes (Tests\Unit\CatalogoRoutes)
+ [x] Metodos home para catalogo existen
+ [x] Archivo routes define urls publicas
+ [x] Spark routes incluye catalogo
+

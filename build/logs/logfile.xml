@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="CLI Arguments" tests="11" assertions="41" errors="0" failures="0" skipped="0" time="0.646719">
+    <testsuite name="Tests\Unit\CatalogoHelperTest" file="C:\Proyectos\tony\tests\unit\CatalogoHelperTest.php" tests="8" assertions="26" errors="0" failures="0" skipped="0" time="0.043387">
+      <testcase name="testSlugEliminaAcentos" file="C:\Proyectos\tony\tests\unit\CatalogoHelperTest.php" line="13" class="Tests\Unit\CatalogoHelperTest" classname="Tests.Unit.CatalogoHelperTest" assertions="4" time="0.027908"/>
+      <testcase name="testSlugNoContieneCaracteresUnicodeEnUrl" file="C:\Proyectos\tony\tests\unit\CatalogoHelperTest.php" line="24" class="Tests\Unit\CatalogoHelperTest" classname="Tests.Unit.CatalogoHelperTest" assertions="3" time="0.007318"/>
+      <testcase name="testNormalizeSegmentDecodificaPorcentajeYQuitaAcentos" file="C:\Proyectos\tony\tests\unit\CatalogoHelperTest.php" line="32" class="Tests\Unit\CatalogoHelperTest" classname="Tests.Unit.CatalogoHelperTest" assertions="2" time="0.001482"/>
+      <testcase name="testCoincideSlugConVariantesDeAcentos" file="C:\Proyectos\tony\tests\unit\CatalogoHelperTest.php" line="44" class="Tests\Unit\CatalogoHelperTest" classname="Tests.Unit.CatalogoHelperTest" assertions="4" time="0.002405"/>
+      <testcase name="testCoincideSlugProyectoConPrefijoDesarrollo" file="C:\Proyectos\tony\tests\unit\CatalogoHelperTest.php" line="54" class="Tests\Unit\CatalogoHelperTest" classname="Tests.Unit.CatalogoHelperTest" assertions="4" time="0.001123"/>
+      <testcase name="testUrlsUsanSlugsAscii" file="C:\Proyectos\tony\tests\unit\CatalogoHelperTest.php" line="62" class="Tests\Unit\CatalogoHelperTest" classname="Tests.Unit.CatalogoHelperTest" assertions="3" time="0.001366"/>
+      <testcase name="testRequiereRedireccionCanonicaConAcentos" file="C:\Proyectos\tony\tests\unit\CatalogoHelperTest.php" line="76" class="Tests\Unit\CatalogoHelperTest" classname="Tests.Unit.CatalogoHelperTest" assertions="3" time="0.000918"/>
+      <testcase name="testParsePaymentMethods" file="C:\Proyectos\tony\tests\unit\CatalogoHelperTest.php" line="85" class="Tests\Unit\CatalogoHelperTest" classname="Tests.Unit.CatalogoHelperTest" assertions="3" time="0.000868"/>
+    </testsuite>
+    <testsuite name="Tests\Unit\CatalogoRoutesTest" file="C:\Proyectos\tony\tests\unit\CatalogoRoutesTest.php" tests="3" assertions="15" errors="0" failures="0" skipped="0" time="0.603332">
+      <testcase name="testMetodosHomeParaCatalogoExisten" file="C:\Proyectos\tony\tests\unit\CatalogoRoutesTest.php" line="12" class="Tests\Unit\CatalogoRoutesTest" classname="Tests.Unit.CatalogoRoutesTest" assertions="5" time="0.002188"/>
+      <testcase name="testArchivoRoutesDefineUrlsPublicas" file="C:\Proyectos\tony\tests\unit\CatalogoRoutesTest.php" line="21" class="Tests\Unit\CatalogoRoutesTest" classname="Tests.Unit.CatalogoRoutesTest" assertions="6" time="0.001858"/>
+      <testcase name="testSparkRoutesIncluyeCatalogo" file="C:\Proyectos\tony\tests\unit\CatalogoRoutesTest.php" line="33" class="Tests\Unit\CatalogoRoutesTest" classname="Tests.Unit.CatalogoRoutesTest" assertions="4" time="0.599286"/>
+    </testsuite>
+  </testsuite>
+</testsuites>

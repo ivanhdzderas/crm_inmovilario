@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba SweetAlert2</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+            background-color: #f0f2f5;
+        }
+        .test-btn {
+            margin: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-error { background-color: #dc3545; color: white; }
+        .btn-warning { background-color: #ffc107; color: black; }
+        .btn-info { background-color: #17a2b8; color: white; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Prueba de SweetAlert2</h1>
+    <p>Prueba todas las alertas implementadas en el sistema:</p>
+
+    <h3>Alertas Básicas:</h3>
+    <button class="test-btn btn-success" onclick="testSuccess()">✅ Mensaje de Éxito</button>
+    <button class="test-btn btn-error" onclick="testError()">❌ Mensaje de Error</button>
+    <button class="test-btn btn-warning" onclick="testWarning()">⚠️ Mensaje de Advertencia</button>
+
+    <h3>Confirmaciones:</h3>
+    <button class="test-btn btn-warning" onclick="testConfirm()">🗑️ Confirmación de Eliminación</button>
+    <button class="test-btn btn-info" onclick="testInput()">📝 Input de Recibo</button>
+
+    <h3>Alerta de Crédito (Simulada):</h3>
+    <button class="test-btn btn-warning" onclick="testCreditDifference()">💰 Diferencia de Crédito</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function testSuccess() {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: 'Apartado registrado correctamente.',
+                confirmButtonColor: '#28a745',
+                timer: 3000,
+                timerProgressBar: true
+            });
+        }
+
+        function testError() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al Guardar',
+                html: '• Campo nombre es requerido<br>• Email debe ser válido<br>• Teléfono es requerido',
+                confirmButtonColor: '#dc3545'
+            });
+        }
+
+        function testWarning() {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Atención',
+                text: 'Esta acción requerirá confirmación adicional.',
+                confirmButtonColor: '#ffc107'
+            });
+        }
+
+        function testConfirm() {
+            Swal.fire({
+                title: '¿Eliminar Usuario?',
+                text: 'Se eliminará permanentemente el usuario "Juan Pérez"',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Eliminado!',
+                        text: 'El usuario ha sido eliminado correctamente.',
+                        confirmButtonColor: '#28a745'
+                    });
+                }
+            });
+        }
+
+        function testInput() {
+            Swal.fire({
+                title: 'Registrar Apartado',
+                html: 'Ingrese el número de recibo o referencia del apartado <span class="text-muted">(opcional)</span>:',
+                input: 'text',
+                inputPlaceholder: 'Ej: RECIBO-001',
+                showCancelButton: true,
+                confirmButtonColor: '#ffc107',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Continuar',
+                cancelButtonText: 'Cancelar',
+                inputValidator: (value) => {
+                    if (value && value.length > 255) {
+                        return 'El recibo no puede exceder 255 caracteres';
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Recibo Registrado',
+                        text: `Recibo: ${result.value || 'Sin especificar'}`,
+                        confirmButtonColor: '#17a2b8'
+                    });
+                }
+            });
+        }
+
+        function testCreditDifference() {
+            Swal.fire({
+                title: '🚨 Diferencia de Crédito Detectada',
+                html: `
+                    <div style="text-align: left; margin: 20px 0;">
+                        <p><strong>Precio del inmueble:</strong> $1,500,000.00</p>
+                        <p><strong>Crédito autorizado:</strong> $1,200,000.00</p>
+                        <p style="color: #dc3545;"><strong>DIFERENCIA:</strong> $300,000.00</p>
+                        <hr>
+                        <p style="color: #6c757d; font-size: 0.9em;">Esta diferencia se registrará como cargo adicional en el estado de cuenta del cliente.</p>
+                    </div>
+                `,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ffc107',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Acepto la diferencia',
+                cancelButtonText: 'Cancelar apartado',
+                width: 600
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Apartado Registrado!',
+                        text: 'Apartado registrado correctamente.',
+                        footer: 'La diferencia de crédito ha sido registrada como cargo adicional.',
+                        confirmButtonColor: '#28a745'
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+</html>
