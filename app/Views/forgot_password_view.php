@@ -8,12 +8,12 @@ Recuperar Contraseña
 <h1 class="text-center">Recuperar Contraseña</h1>
 <hr>
 
-<p style="margin-bottom: 1rem; color: #666;">Ingresa tu correo y define una nueva contraseña.</p>
+<p style="margin-bottom: 1rem; color: #666;">Escribe tu correo y te enviaremos un enlace para crear una nueva contraseña.</p>
 
 <?php if (session()->getFlashdata('error')): ?>
     <div class="alert-error" style="margin-bottom: 1rem;">
         <i class="fas fa-exclamation-circle"></i>
-        <span><?= session()->getFlashdata('error') ?></span>
+        <span><?= esc(session()->getFlashdata('error')) ?></span>
     </div>
 <?php endif; ?>
 
@@ -42,43 +42,9 @@ Recuperar Contraseña
         </div>
     </div>
 
-    <div class="form-group">
-        <label for="password">
-            <i class="fas fa-lock"></i> Nueva Contraseña
-        </label>
-        <div class="input-wrapper">
-            <i class="input-icon fas fa-key"></i>
-            <input
-                type="password"
-                id="password"
-                name="password"
-                class="form-control"
-                placeholder="Mínimo 8 caracteres"
-                autocomplete="new-password"
-                required>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label for="password_confirm">
-            <i class="fas fa-lock"></i> Confirmar Nueva Contraseña
-        </label>
-        <div class="input-wrapper">
-            <i class="input-icon fas fa-key"></i>
-            <input
-                type="password"
-                id="password_confirm"
-                name="password_confirm"
-                class="form-control"
-                placeholder="Repite la nueva contraseña"
-                autocomplete="new-password"
-                required>
-        </div>
-    </div>
-
     <button type="submit" class="btn">
-        <i class="fas fa-save"></i>
-        <span>Actualizar Contraseña</span>
+        <i class="fas fa-paper-plane"></i>
+        <span>Enviar enlace</span>
     </button>
 </form>
 

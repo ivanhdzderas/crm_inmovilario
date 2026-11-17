@@ -9,6 +9,77 @@
     
     <!-- 1. JQUERY (MOVIDO AQUÍ POR SOLICITUD) -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <!-- Protección CSRF: agrega el token a todo AJAX/fetch y convierte borrados en POST -->
+    <meta name="csrf-name" content="<?= csrf_token() ?>">
+    <meta name="csrf-header" content="<?= csrf_header() ?>">
+    <meta name="csrf-hash" content="<?= csrf_hash() ?>">
+    <script>
+        (function () {
+            var nombre = document.querySelector('meta[name="csrf-name"]').content;
+            var header = document.querySelector('meta[name="csrf-header"]').content;
+            var hash = document.querySelector('meta[name="csrf-hash"]').content;
+            var mismoSitio = function (url) {
+                try { return new URL(url, location.href).origin === location.origin; } catch (e) { return true; }
+            };
+
+            // jQuery
+            $.ajaxPrefilter(function (opts, original, xhr) {
+                if (!/^(GET|HEAD|OPTIONS)$/i.test(opts.type || 'GET') && mismoSitio(opts.url)) {
+                    xhr.setRequestHeader(header, hash);
+                }
+            });
+
+            // fetch
+            var fetchOriginal = window.fetch;
+            if (fetchOriginal) {
+                window.fetch = function (recurso, init) {
+                    init = init || {};
+                    var metodo = (init.method || (recurso && recurso.method) || 'GET').toUpperCase();
+                    var url = typeof recurso === 'string' ? recurso : (recurso && recurso.url);
+                    if (!/^(GET|HEAD|OPTIONS)$/.test(metodo) && mismoSitio(url)) {
+                        var h = new Headers(init.headers || (recurso && recurso.headers) || {});
+                        if (!h.has(header)) { h.set(header, hash); }
+                        init.headers = h;
+                    }
+                    return fetchOriginal.call(this, recurso, init);
+                };
+            }
+
+            // Borrado por POST (antes eran enlaces GET)
+            window.postDelete = function (url) {
+                var f = document.createElement('form');
+                f.method = 'post';
+                f.action = url;
+                var i = document.createElement('input');
+                i.type = 'hidden'; i.name = nombre; i.value = hash;
+                f.appendChild(i);
+                document.body.appendChild(f);
+                f.submit();
+            };
+
+            // Formularios POST normales (incluidos los cargados por AJAX) sin token: se agrega al enviarse
+            document.addEventListener('submit', function (e) {
+                var f = e.target;
+                if (f && f.method && f.method.toLowerCase() === 'post' && mismoSitio(f.action) && !f.querySelector('input[name="' + nombre + '"]')) {
+                    var i = document.createElement('input');
+                    i.type = 'hidden'; i.name = nombre; i.value = hash;
+                    f.appendChild(i);
+                }
+            }, true);
+
+            // Enlaces directos <a href=".../delete/ID" onclick="return confirm(...)">
+            document.addEventListener('click', function (e) {
+                var a = e.target.closest && e.target.closest('a[href]');
+                if (!a || e.defaultPrevented) { return; }
+                var href = a.getAttribute('href');
+                if (/\/delete(_photo)?\/\d+\/?$/.test(href) && mismoSitio(href)) {
+                    e.preventDefault();
+                    window.postDelete(href);
+                }
+            });
+        })();
+    </script>
     
     <!-- 2. POPPER.JS (MOVIDO AQUÍ POR SOLICITUD) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
@@ -807,7 +878,7 @@
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = url;
+                    postDelete(url);
                 }
             });
         }
@@ -825,7 +896,7 @@
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = url;
+                    postDelete(url);
                 }
             });
         }
@@ -843,7 +914,7 @@
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = url;
+                    postDelete(url);
                 }
             });
         }
@@ -861,7 +932,7 @@
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = url;
+                    postDelete(url);
                 }
             });
         }
@@ -879,7 +950,7 @@
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = url;
+                    postDelete(url);
                 }
             });
         }
@@ -897,7 +968,7 @@
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = url;
+                    postDelete(url);
                 }
             });
         }

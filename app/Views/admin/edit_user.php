@@ -45,6 +45,15 @@ Editar Usuario
                 </div>
 
                 <div class="mb-3">
+                    <label for="is_active" class="form-label">Estado de la cuenta</label>
+                    <select class="form-control" id="is_active" name="is_active">
+                        <option value="1" <?= (int) $user['is_active'] === 1 ? 'selected' : '' ?>>Activa (puede entrar)</option>
+                        <option value="0" <?= (int) $user['is_active'] !== 1 ? 'selected' : '' ?>>Inactiva / pendiente de aprobación</option>
+                    </select>
+                    <small class="text-muted">Las cuentas creadas desde "Registrarse" quedan pendientes hasta que las actives aquí.</small>
+                </div>
+
+                <div class="mb-3">
                     <label for="password" class="form-label">Nueva Contraseña (opcional)</label>
                     <input type="password" class="form-control" id="password" name="password">
                     <small class="text-muted">Dejar en blanco para no cambiar la contraseña actual.</small>

@@ -133,7 +133,8 @@ class Home extends BaseController
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
 
-        $realEstate = (new RealEstateModel())->getRealEstateWithDetails($id);
+        // Solo inmuebles en venta (no vendidos ni dados de baja)
+        $realEstate = (new RealEstateModel())->getPublicCatalogQuery()->where('real_estates.id', (int) $id)->first();
 
         if (! $realEstate) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();

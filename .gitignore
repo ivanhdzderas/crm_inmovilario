@@ -5,3 +5,12 @@
 .DS_Store
 .vscode/
 .idea/
+# Archivos generados en tiempo de ejecución (CodeIgniter)
+/writable/session/*
+!/writable/session/index.html
+/writable/debugbar/*
+!/writable/debugbar/index.html
+/writable/cache/*
+!/writable/cache/index.html
+/writable/logs/*
+!/writable/logs/index.html

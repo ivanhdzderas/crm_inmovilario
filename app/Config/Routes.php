@@ -26,6 +26,8 @@ $routes->get('login', 'AuthController::login');
 $routes->post('login/auth', 'AuthController::authenticate');
 $routes->get('forgot-password', 'AuthController::forgotPassword');
 $routes->post('forgot-password', 'AuthController::processForgotPassword');
+$routes->get('restablecer/(:segment)', 'AuthController::resetForm/$1');
+$routes->post('restablecer/(:segment)', 'AuthController::resetPassword/$1');
 $routes->get('dashboard', 'DashboardController::index', ['filter' => 'auth']);
 $routes->get('logout', 'AuthController::logout');
 
@@ -39,7 +41,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
     $routes->post('real_estates/create', 'RealEstatesController::create');
     $routes->get('real_estates/edit/(:num)', 'RealEstatesController::edit/$1');
     $routes->post('real_estates/update/(:num)', 'RealEstatesController::update/$1');
-    $routes->get('real_estates/delete/(:num)', 'RealEstatesController::delete/$1');
+    $routes->post('real_estates/delete/(:num)', 'RealEstatesController::delete/$1');
     
     // Ruta para la descarga del PDF (Nueva)
     $routes->get('real_estates/downloadTechnicalSheet/(:num)', 'RealEstatesController::downloadTechnicalSheet/$1');
@@ -48,18 +50,18 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
     $routes->get('real_estates/getMatchingProspects/(:num)', 'RealEstatesController::getMatchingProspects/$1');
 
     // Rutas para la gestión de fotos de inmuebles
-    $routes->get('real_estates/delete_photo/(:num)', 'RealEstatesController::delete_photo/$1');
+    $routes->post('real_estates/delete_photo/(:num)', 'RealEstatesController::delete_photo/$1');
 
     // Rutas para la gestión de documentos
     $routes->get('real_estates/documents/(:num)', 'DocumentsController::index/$1');
     $routes->post('real_estates/documents/upload', 'DocumentsController::upload');
-    $routes->get('real_estates/documents/delete/(:num)', 'DocumentsController::delete/$1');
+    $routes->post('real_estates/documents/delete/(:num)', 'DocumentsController::delete/$1');
 
     // Rutas para usuarios
     $routes->get('users', '\\App\\Controllers\\Admin::users');
     $routes->get('users/edit/(:num)', '\\App\\Controllers\\Admin::edit/$1');
     $routes->post('users/update', '\\App\\Controllers\\Admin::update');
-    $routes->get('users/delete/(:num)', '\\App\\Controllers\\Admin::delete/$1');
+    $routes->post('users/delete/(:num)', '\\App\\Controllers\\Admin::delete/$1');
 
     // Rutas para la gestión de Proyectos Inmobiliarios
     $routes->group('proyectos', function($routes) { // El namespace ya es heredado del grupo 'admin'
@@ -70,7 +72,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         $routes->get('edit/(:num)', 'ProyectosInmobiliariosController::edit/$1');
         $routes->post('update/(:num)', 'ProyectosInmobiliariosController::update/$1');
         $routes->put('update/(:num)', 'ProyectosInmobiliariosController::update/$1');
-        $routes->get('delete/(:num)', 'ProyectosInmobiliariosController::delete/$1');
+        $routes->post('delete/(:num)', 'ProyectosInmobiliariosController::delete/$1');
         $routes->get('show/(:num)', 'ProyectosInmobiliariosController::show/$1');
     });
 
@@ -81,11 +83,10 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         $routes->post('store', 'DocumentTypesController::store');
         $routes->get('edit/(:num)', 'DocumentTypesController::edit/$1');
         $routes->post('update/(:num)', 'DocumentTypesController::update/$1');
-        $routes->get('delete/(:num)', 'DocumentTypesController::delete/$1');
+        $routes->post('delete/(:num)', 'DocumentTypesController::delete/$1');
     });
 
-    // Rutas para la gestión de Métodos de Pago
-    $routes->resource('payment-methods', ['controller' => 'PaymentMethodsController', 'except' => 'show']);
+    // Las formas de pago se administran en client_document_catalog (no existe PaymentMethodsController)
 
     // Catálogo de motivos de cancelación
     $routes->get('cancellation-reasons', 'CancellationReasonsController::index');
@@ -93,7 +94,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
     $routes->post('cancellation-reasons/store', 'CancellationReasonsController::store');
     $routes->get('cancellation-reasons/edit/(:num)', 'CancellationReasonsController::edit/$1');
     $routes->post('cancellation-reasons/update/(:num)', 'CancellationReasonsController::update/$1');
-    $routes->get('cancellation-reasons/delete/(:num)', 'CancellationReasonsController::delete/$1');
+    $routes->post('cancellation-reasons/delete/(:num)', 'CancellationReasonsController::delete/$1');
 
     // Catálogo de origen del cliente (redes sociales, referidos, etc.)
     $routes->get('acquisition-sources', 'AcquisitionSourcesController::index');
@@ -106,7 +107,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
     $routes->post('acquisition-sources/store', 'AcquisitionSourcesController::store');
     $routes->get('acquisition-sources/edit/(:num)', 'AcquisitionSourcesController::edit/$1');
     $routes->post('acquisition-sources/update/(:num)', 'AcquisitionSourcesController::update/$1');
-    $routes->get('acquisition-sources/delete/(:num)', 'AcquisitionSourcesController::delete/$1');
+    $routes->post('acquisition-sources/delete/(:num)', 'AcquisitionSourcesController::delete/$1');
 
     // Módulo funerario
     $routes->group('funeral-locations', static function ($routes) {
@@ -115,7 +116,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         $routes->post('store', 'FuneralLocationsController::store');
         $routes->get('edit/(:num)', 'FuneralLocationsController::edit/$1');
         $routes->post('update/(:num)', 'FuneralLocationsController::update/$1');
-        $routes->get('delete/(:num)', 'FuneralLocationsController::delete/$1');
+        $routes->post('delete/(:num)', 'FuneralLocationsController::delete/$1');
     });
     $routes->group('funeral-homes', static function ($routes) {
         $routes->get('/', 'FuneralHomesController::index');
@@ -123,7 +124,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         $routes->post('store', 'FuneralHomesController::store');
         $routes->get('edit/(:num)', 'FuneralHomesController::edit/$1');
         $routes->post('update/(:num)', 'FuneralHomesController::update/$1');
-        $routes->get('delete/(:num)', 'FuneralHomesController::delete/$1');
+        $routes->post('delete/(:num)', 'FuneralHomesController::delete/$1');
     });
     $routes->group('funeral-products', static function ($routes) {
         $routes->get('/', 'FuneralProductsController::index');
@@ -131,7 +132,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
         $routes->post('store', 'FuneralProductsController::store');
         $routes->get('edit/(:num)', 'FuneralProductsController::edit/$1');
         $routes->post('update/(:num)', 'FuneralProductsController::update/$1');
-        $routes->get('delete/(:num)', 'FuneralProductsController::delete/$1');
+        $routes->post('delete/(:num)', 'FuneralProductsController::delete/$1');
         $routes->get('homes-by-location/(:num)', 'FuneralProductsController::homesByLocation/$1');
     });
 

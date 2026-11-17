@@ -28,7 +28,7 @@ Panel de Admin
                         <td><?= esc($user['full_name']) ?></td>
                         <td><?= esc($user['email']) ?></td>
                         <td><?= esc($user['role_id']) == 1 ? 'Admin' : 'Asesor' ?></td>
-                        <td><?= esc($user['is_active']) ? 'Activo' : 'Inactivo' ?></td>
+                        <td><?= (int) $user['is_active'] === 1 ? '<span class="badge badge-success">Activo</span>' : '<span class="badge badge-warning">Pendiente / inactivo</span>' ?></td>
                         <td><?= esc($user['created_at']) ?></td>
                         <td>
                             <a href="<?= base_url('admin/users/edit/' . $user['id']) ?>" class="btn btn-warning">Editar</a>

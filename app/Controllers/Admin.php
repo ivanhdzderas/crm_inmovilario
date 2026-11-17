@@ -34,12 +34,20 @@ class Admin extends Controller
         $userModel = new UserModel();
         $id = $this->request->getPost('id');
 
+        $rolId = (int) $this->request->getPost('role_id');
         $data = [
             'full_name' => $this->request->getPost('full_name'),
             'email' => $this->request->getPost('email'),
             'phone' => $this->request->getPost('phone'),
-            'role_id' => $this->request->getPost('role_id'),
+            'role_id' => in_array($rolId, [1, 2], true) ? $rolId : 2,
+            'is_active' => $this->request->getPost('is_active') === '0' ? 0 : 1,
         ];
+
+        // Evita que el administrador se bloquee a sí mismo
+        if ((int) $id === (int) session()->get('user_id')) {
+            $data['is_active'] = 1;
+            $data['role_id'] = 1;
+        }
 
         // Validar si la contraseña es proporcionada y actualizarla
         if ($this->request->getPost('password')) {
@@ -52,6 +60,10 @@ class Admin extends Controller
 
     public function delete($id)
     {
+        if ((int) $id === (int) session()->get('user_id')) {
+            return redirect()->to('admin/users')->with('error', 'No puedes eliminar tu propia cuenta.');
+        }
+
         $userModel = new UserModel();
         $userModel->delete($id);
         return redirect()->to('admin/users')->with('success', 'Usuario eliminado correctamente.');

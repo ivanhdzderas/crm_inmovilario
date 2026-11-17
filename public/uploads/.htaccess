@@ -1,0 +1,8 @@
+# Archivos subidos: nunca ejecutar código del servidor
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<FilesMatch "\.(php[0-9]?|phtml|phar|pl|py|cgi|sh|asp|aspx|jsp)$">
+    Require all denied
+</FilesMatch>
+Options -ExecCGI -Indexes

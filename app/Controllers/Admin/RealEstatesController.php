@@ -134,12 +134,17 @@ class RealEstatesController extends BaseController
     {
         $validPhotos = [];
 
+        // Solo fotos reales (tipo detectado por contenido). Sin SVG: puede contener scripts.
+        $mimesPermitidos = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
         foreach ($uploadedPhotos as $index => $file) {
             if (
                 $file
                 && $file->isValid()
                 && !$file->hasMoved()
-                && strpos((string) $file->getMimeType(), 'image/') === 0
+                && in_array((string) $file->getMimeType(), $mimesPermitidos, true)
+                && $file->getSize() <= 10 * 1024 * 1024
+                && @getimagesize($file->getTempName()) !== false
             ) {
                 $validPhotos[$index] = $file;
             }
