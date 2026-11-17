@@ -79,6 +79,48 @@ Configuración del Sistema
 
                 <hr class="my-4">
 
+                <h5 class="card-title" id="correo">Correo del sistema (SMTP)</h5>
+                <p class="card-text">Se usa para enviar el enlace de "Olvidé mi contraseña". Pide estos datos a tu proveedor de hosting o de correo (cPanel, Gmail, Outlook, Zoho…). Con Gmail usa una <em>contraseña de aplicación</em>, no tu contraseña normal.</p>
+                <?php $hayPass = ! empty($settings['mail_smtp_pass'] ?? ''); ?>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="mail_smtp_host" class="form-label">Servidor SMTP</label>
+                        <input type="text" class="form-control" id="mail_smtp_host" name="mail_smtp_host" placeholder="Ej.: mail.tudominio.com o smtp.gmail.com" value="<?= esc(old('mail_smtp_host', $settings['mail_smtp_host'] ?? '')) ?>">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="mail_smtp_port" class="form-label">Puerto</label>
+                        <input type="text" class="form-control" id="mail_smtp_port" name="mail_smtp_port" placeholder="587" value="<?= esc(old('mail_smtp_port', $settings['mail_smtp_port'] ?? '587')) ?>">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="mail_smtp_crypto" class="form-label">Seguridad</label>
+                        <?php $crypto = old('mail_smtp_crypto', $settings['mail_smtp_crypto'] ?? 'tls'); ?>
+                        <select class="form-control" id="mail_smtp_crypto" name="mail_smtp_crypto">
+                            <option value="tls" <?= $crypto === 'tls' ? 'selected' : '' ?>>TLS (puerto 587)</option>
+                            <option value="ssl" <?= $crypto === 'ssl' ? 'selected' : '' ?>>SSL (puerto 465)</option>
+                            <option value="" <?= $crypto === '' ? 'selected' : '' ?>>Ninguna</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="mail_smtp_user" class="form-label">Usuario</label>
+                        <input type="text" class="form-control" id="mail_smtp_user" name="mail_smtp_user" autocomplete="off" placeholder="Normalmente el correo completo" value="<?= esc(old('mail_smtp_user', $settings['mail_smtp_user'] ?? '')) ?>">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="mail_smtp_pass" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="mail_smtp_pass" name="mail_smtp_pass" autocomplete="new-password" placeholder="<?= $hayPass ? '•••••••• (guardada; escribe para cambiarla)' : '' ?>">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="mail_from_email" class="form-label">Correo remitente</label>
+                        <input type="email" class="form-control" id="mail_from_email" name="mail_from_email" placeholder="Ej.: no-responder@tudominio.com" value="<?= esc(old('mail_from_email', $settings['mail_from_email'] ?? '')) ?>">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="mail_from_name" class="form-label">Nombre del remitente</label>
+                        <input type="text" class="form-control" id="mail_from_name" name="mail_from_name" placeholder="Pacific Inmobiliaria" value="<?= esc(old('mail_from_name', $settings['mail_from_name'] ?? '')) ?>">
+                    </div>
+                </div>
+                <p class="small text-muted">Guarda la configuración y luego usa <strong>"Enviar correo de prueba"</strong> (abajo) para confirmar que funciona.</p>
+
+                <hr class="my-4">
+
                 <h5 class="card-title">Configuración de Documentos</h5>
                 <p class="card-text">Define qué documentos se deben solicitar según el tipo de inmueble.</p>
 
@@ -97,6 +139,13 @@ Configuración del Sistema
                     </button>
                 </div>
             <?= form_close() ?>
+
+            <hr class="my-4">
+            <form method="post" action="<?= site_url('admin/settings/test-email') ?>" class="d-flex align-items-center flex-wrap" style="gap: 12px;">
+                <?= csrf_field() ?>
+                <button type="submit" class="btn btn-outline-primary"><i class="fas fa-paper-plane"></i> Enviar correo de prueba</button>
+                <small class="text-muted">Se envía a tu propio correo con la configuración guardada.</small>
+            </form>
         </div>
     </div>
 </div>

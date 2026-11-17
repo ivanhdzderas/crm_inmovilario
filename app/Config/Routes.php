@@ -49,7 +49,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
     $routes->get('real_estates/downloadTechnicalSheet/(:num)', 'RealEstatesController::downloadTechnicalSheet/$1');
     
     // Ruta para obtener prospectos que coinciden con un inmueble
-    $routes->get('real_estates/getMatchingProspects/(:num)', 'RealEstatesController::getMatchingProspects/$1');
+    $routes->get('real_estates/getMatchingProspects/(:num)', '\App\Controllers\MatchingController::inmueble/$1');
 
     // Rutas para la gestión de fotos de inmuebles
     $routes->post('real_estates/delete_photo/(:num)', 'RealEstatesController::delete_photo/$1');
@@ -219,6 +219,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'au
     // Rutas para la Configuración General del Sistema
     $routes->get('settings', 'ConfigurationController::index');
     $routes->post('settings/update', 'ConfigurationController::update');
+    $routes->post('settings/test-email', 'ConfigurationController::testEmail');
 });
 
 // ====================================================================
@@ -384,3 +385,12 @@ $routes->get('terminos-condiciones-crm', 'Legal::crmTermsOfService');
 $routes->get('politica-de-cookies', 'Legal::cookiePolicy');
 $routes->get('condiciones-de-uso', 'Legal::conditionsOfUse');
 $routes->get('nosotros', 'Home::aboutUs');
+// Matching, trámites y reporte por prospecto (asesores y administradores)
+$routes->group('', ['filter' => 'auth'], static function ($routes) {
+    $routes->get('matching', 'MatchingController::index');
+    $routes->get('matching/cliente/(:num)', 'MatchingController::cliente/$1');
+    $routes->get('tramites', 'TramitesController::index');
+    $routes->get('tramites/(:num)', 'TramitesController::detalle/$1');
+    $routes->post('tramites/(:num)/etapa', 'TramitesController::etapa/$1');
+    $routes->get('reportes/prospecto/(:num)', 'ReportesController::prospecto/$1');
+});

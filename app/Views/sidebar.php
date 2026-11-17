@@ -73,6 +73,20 @@
                         <div class="nav-indicator"></div>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="<?= base_url('matching') ?>" class="nav-link">
+                        <i class="fa fa-magic nav-icon"></i>
+                        <span class="nav-text">¿Qué le ofrezco?</span>
+                        <div class="nav-indicator"></div>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?= base_url('tramites') ?>" class="nav-link">
+                        <i class="fa fa-route nav-icon"></i>
+                        <span class="nav-text">Trámites</span>
+                        <div class="nav-indicator"></div>
+                    </a>
+                </li>
             </ul>
         </div>
 

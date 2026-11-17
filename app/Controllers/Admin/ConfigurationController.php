@@ -50,7 +50,19 @@ class ConfigurationController extends BaseController
         $permitidas = [
             'company_name', 'company_website', 'document_requirement_type',
             'site_name', 'site_tagline', 'site_whatsapp', 'site_email', 'site_address', 'site_leads_user_id',
+            'mail_smtp_host', 'mail_smtp_port', 'mail_smtp_user', 'mail_smtp_pass', 'mail_smtp_crypto', 'mail_from_email', 'mail_from_name',
         ];
+
+        // La contraseña SMTP no se muestra en el formulario: si llega vacía, se conserva la guardada
+        if (array_key_exists('mail_smtp_pass', $postData) && trim((string) $postData['mail_smtp_pass']) === '') {
+            unset($postData['mail_smtp_pass']);
+        }
+        if (! empty($postData['mail_from_email']) && ! filter_var($postData['mail_from_email'], FILTER_VALIDATE_EMAIL)) {
+            return redirect()->back()->withInput()->with('error', 'El correo remitente no es válido.');
+        }
+        if (! empty($postData['mail_smtp_port']) && ! ctype_digit((string) $postData['mail_smtp_port'])) {
+            return redirect()->back()->withInput()->with('error', 'El puerto SMTP debe ser un número (normalmente 587 o 465).');
+        }
 
         $whatsapp = preg_replace('/\D/', '', (string) ($postData['site_whatsapp'] ?? ''));
         if ($whatsapp !== '' && ! in_array(strlen($whatsapp), [10, 12], true)) {
@@ -81,5 +93,25 @@ class ConfigurationController extends BaseController
         }
 
         return redirect()->to('admin/settings')->with('success', 'Configuración guardada correctamente.');
+    }
+
+    /** Envía un correo de prueba al administrador que lo solicita. */
+    public function testEmail()
+    {
+        helper('sitio');
+        $user = db_connect()->table('users')->select('email')->where('id', (int) session()->get('user_id'))->get()->getRowArray();
+        if (! $user) {
+            return redirect()->to('admin/settings#correo')->with('error', 'No se encontró tu usuario.');
+        }
+
+        [$ok, $detalle] = correo_enviar(
+            $user['email'],
+            'Prueba de correo · ' . sitio('site_name'),
+            '<p>¡Listo! El correo del sistema está bien configurado.</p><p>Ya funcionará la recuperación de contraseña.</p>'
+        );
+
+        return redirect()->to('admin/settings#correo')->with($ok ? 'success' : 'error', $ok
+            ? 'Correo de prueba enviado a ' . $user['email'] . '. Revisa tu bandeja (y spam).'
+            : 'No se pudo enviar el correo de prueba: ' . $detalle);
     }
 }

@@ -159,6 +159,18 @@
                                             title="Ver Detalle y Seguimiento">
                                             <i class="fa fa-eye"></i>
                                         </button>
+                                        <a href="<?= site_url('reportes/prospecto/' . $prospect['id']) ?>"
+                                            class="btn btn-sm btn-outline-secondary rounded-pill px-2 py-1"
+                                            title="Reporte de seguimiento (imprimible)">
+                                            <i class="fa fa-file-alt"></i>
+                                        </a>
+                                        <?php if (($prospect['client_type'] ?? 'comprador') !== 'vendedor' && empty($isFunerarioList)): ?>
+                                        <a href="<?= site_url('matching/cliente/' . $prospect['id']) ?>"
+                                            class="btn btn-sm btn-outline-primary rounded-pill px-2 py-1"
+                                            title="¿Qué le ofrezco? (inmuebles compatibles)">
+                                            <i class="fa fa-magic"></i>
+                                        </a>
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

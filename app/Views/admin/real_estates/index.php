@@ -191,17 +191,19 @@ function showMatchingProspects(realEstateId, clave) {
                     
                     let row = `
                         <tr>
-                            <td><strong>${prospect.full_name || 'N/A'}</strong></td>
+                            <td><strong>${$('<div>').text(prospect.full_name || 'N/A').html()}</strong>
+                                ${prospect.score ? `<br><span class="badge ${prospect.score >= 80 ? 'badge-success' : 'badge-warning'}" title="${$('<div>').text((prospect.reasons || []).join(' · ')).html()}">${prospect.score}/100</span>` : ''}</td>
                             <td><a href="tel:${prospect.phone}">${prospect.phone || 'N/A'}</a></td>
                             <td><a href="mailto:${prospect.email}">${prospect.email || 'N/A'}</a></td>
                             <td>${creditAmount}</td>
                             <td><span class="badge badge-primary">${prospect.zone_name || 'N/A'}</span></td>
                             <td>${prospect.asesor_name || 'Sin asignar'}</td>
                             <td>
-                                <a href="<?= base_url('prospects/view/') ?>${prospect.id}" 
-                                   class="btn btn-sm btn-info" 
-                                   target="_blank">
-                                    <i class="fas fa-eye"></i> Ver
+                                <a href="<?= base_url('reportes/prospecto/') ?>${prospect.id}" class="btn btn-sm btn-info" target="_blank" title="Reporte de seguimiento">
+                                    <i class="fas fa-file-alt"></i> Reporte
+                                </a>
+                                <a href="<?= base_url('matching/cliente/') ?>${prospect.id}" class="btn btn-sm btn-outline-primary" target="_blank" title="Opciones para este cliente">
+                                    <i class="fas fa-magic"></i>
                                 </a>
                             </td>
                         </tr>

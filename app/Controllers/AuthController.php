@@ -200,24 +200,17 @@ class AuthController extends Controller
 
     private function enviarCorreoRestablecer(array $user, string $enlace): void
     {
-        try {
-            $email  = service('email');
-            $config = config('Email');
-            $desde  = $config->fromEmail ?: ('no-responder@' . (parse_url(base_url(), PHP_URL_HOST) ?: 'localhost'));
-            $email->setFrom($desde, $config->fromName ?: 'Pacific Inmobiliaria');
-            $email->setTo($user['email']);
-            $email->setSubject('Restablecer tu contraseña');
-            $email->setMessage(
-                '<p>Hola ' . esc($user['full_name']) . ',</p>'
-                . '<p>Recibimos una solicitud para restablecer tu contraseña. Usa este enlace (válido por ' . self::MINUTOS_TOKEN . ' minutos):</p>'
-                . '<p><a href="' . esc($enlace, 'attr') . '">' . esc($enlace) . '</a></p>'
-                . '<p>Si no fuiste tú, ignora este correo; tu contraseña no cambiará.</p>'
-            );
-            if (! $email->send(false)) {
-                log_message('error', '[Restablecer] No se pudo enviar el correo a user_id=' . $user['id'] . '. Revisa la configuración de Email.');
-            }
-        } catch (\Throwable $e) {
-            log_message('error', '[Restablecer] ' . $e->getMessage());
+        helper('sitio');
+        [$ok, $detalle] = correo_enviar(
+            $user['email'],
+            'Restablecer tu contraseña',
+            '<p>Hola ' . esc($user['full_name']) . ',</p>'
+            . '<p>Recibimos una solicitud para restablecer tu contraseña. Usa este enlace (válido por ' . self::MINUTOS_TOKEN . ' minutos):</p>'
+            . '<p><a href="' . esc($enlace, 'attr') . '">' . esc($enlace) . '</a></p>'
+            . '<p>Si no fuiste tú, ignora este correo; tu contraseña no cambiará.</p>'
+        );
+        if (! $ok) {
+            log_message('error', '[Restablecer] No se pudo enviar el correo a user_id=' . $user['id'] . ': ' . $detalle);
         }
     }
 }
