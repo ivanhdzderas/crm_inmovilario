@@ -104,7 +104,8 @@ class RealEstateModel extends Model
             ->select('real_estates.*, real_estate_projects.name as project_name, real_estate_projects.id as project_id, zones.name as zone_name')
             ->join('real_estate_projects', 'real_estate_projects.id = real_estates.project_id', 'left')
             ->join('zones', 'zones.id = real_estates.zone_id', 'left')
-            ->whereIn('real_estates.status', ['Disponible', 'Nuevo', 'Apartado']);
+            // El panel guarda "En apartado"; versiones anteriores usaban "Apartado"
+            ->whereIn('real_estates.status', ['Disponible', 'Nuevo', 'Apartado', 'En apartado']);
     }
 
     public function getPublicCatalog(array $filters = []): array

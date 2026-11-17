@@ -13,6 +13,11 @@
     --tony-white: #FFFFFF;
     --tony-text: #111827;
     --tony-muted: #6B7280;
+    /* Alias usados en el resto del archivo (antes no estaban definidos) */
+    --tony-gold: var(--gold-main);
+    --tony-gold-dark: var(--gold-dark);
+    --tony-blue-pacific: var(--blue-pacific);
+    --tony-blue-dark: var(--blue-dark);
     --tony-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 

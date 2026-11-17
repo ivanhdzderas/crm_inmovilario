@@ -35,7 +35,7 @@ class FuneralCatalog extends BaseController
         }
 
         return view('funerario/index', [
-            'title'      => 'Catálogo funerario | Pacific',
+            'title'      => 'Previsión funeraria | ' . sitio('site_name'),
             'productos'  => $productos,
             'locations'  => (new FuneralLocationModel())->getPublicos(),
             'homes'      => (new FuneralHomeModel())->getActivas(),
@@ -85,7 +85,8 @@ class FuneralCatalog extends BaseController
         }
 
         return view('funerario/producto', [
-            'title'    => $producto['name'] . ' | ' . $producto['home_name'],
+            'title'    => $producto['name'] . ' | ' . sitio('site_name'),
+            'ogImagen' => ! empty($producto['image_path']) ? base_url($producto['image_path']) : null,
             'producto' => $producto,
             'planes'   => $planes,
         ]);

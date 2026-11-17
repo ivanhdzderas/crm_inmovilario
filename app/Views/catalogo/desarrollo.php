@@ -1,50 +1,42 @@
 <?= $this->extend('public_layout') ?>
 
 <?= $this->section('content') ?>
-
-<section class="property-header">
+<section class="cabecera-pagina">
     <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-2">
-                <li class="breadcrumb-item"><a href="<?= base_url('/') ?>">Inicio</a></li>
-                <li class="breadcrumb-item"><a href="<?= url_desarrollo($proyecto) ?>"><?= esc($proyecto['name']) ?></a></li>
-                <li class="breadcrumb-item active">Propiedades</li>
-            </ol>
+        <nav class="migas" aria-label="Ruta">
+            <a href="<?= base_url('/') ?>">Inicio</a><span>/</span>
+            <a href="<?= base_url('inmuebles') ?>">Inmuebles</a><span>/</span>
+            <?= esc($proyecto['name']) ?>
         </nav>
-        <h1 class="display-6 font-weight-bold text-pacific"><?= esc($proyecto['name']) ?></h1>
+        <span class="eyebrow">Desarrollo</span>
+        <h1><?= esc($proyecto['name']) ?></h1>
         <?php if (! empty($proyecto['location'])): ?>
-            <p class="text-muted"><i class="fa-solid fa-location-dot me-2"></i><?= esc($proyecto['location']) ?></p>
+            <p><i class="fa-solid fa-location-dot me-1"></i><?= esc($proyecto['location']) ?></p>
         <?php endif; ?>
         <?php if (! empty($proyecto['description'])): ?>
-            <p class="lead text-secondary"><?= esc($proyecto['description']) ?></p>
+            <p class="mt-2" style="max-width: 760px;"><?= esc($proyecto['description']) ?></p>
         <?php endif; ?>
     </div>
 </section>
 
-<section class="pb-5">
+<section class="seccion pt-4">
     <div class="container">
+        <div class="resultado-barra mt-0">
+            <span><strong class="text-dark"><?= count($propiedades) ?></strong> <?= count($propiedades) === 1 ? 'inmueble disponible' : 'inmuebles disponibles' ?> en este desarrollo</span>
+        </div>
         <?php if (empty($propiedades)): ?>
-            <p class="text-muted">No hay inmuebles disponibles en este desarrollo.</p>
+            <div class="vacio">
+                <i class="fa-solid fa-building d-block"></i>
+                <p class="mb-3">Por ahora no hay inmuebles disponibles en este desarrollo.</p>
+                <a class="btn btn-arena" href="<?= base_url('/') ?>#contacto">Quiero que me avisen</a>
+            </div>
         <?php else: ?>
-            <div class="row">
+            <div class="row g-4">
                 <?php foreach ($propiedades as $p): ?>
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100 shadow-sm border-0">
-                            <a href="<?= url_inmueble($p) ?>">
-                                <img src="<?= base_url($p['main_photo_path'] ?? 'assets/img/placeholder.jpg') ?>" class="card-img-top" style="height:220px;object-fit:cover" alt="">
-                            </a>
-                            <div class="card-body">
-                                <h5 class="text-pacific"><?= esc($p['name']) ?></h5>
-                                <p class="property-price h5"><?= formato_precio_mxn($p['price']) ?></p>
-                                <?= view('partials/payment_badges', ['payment_methods_list' => $p['payment_methods_list'] ?? []]) ?>
-                                <a href="<?= url_inmueble($p) ?>" class="btn btn-main w-100 rounded-pill mt-2">Ver ficha</a>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="col-sm-6 col-lg-4"><?= view('partials/tarjeta_inmueble', ['p' => $p]) ?></div>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
     </div>
 </section>
-
 <?= $this->endSection() ?>

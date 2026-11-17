@@ -3,7 +3,7 @@
 <?= $this->section('content') ?>
 <div class="container-fluid mt-4 mb-5">
     <h1><?= $product ? 'Editar paquete' : 'Nuevo paquete funerario' ?></h1>
-    <?= form_open($product ? 'admin/funeral-products/update/' . $product['id'] : 'admin/funeral-products/store') ?>
+    <?= form_open_multipart($product ? 'admin/funeral-products/update/' . $product['id'] : 'admin/funeral-products/store') ?>
     <?= csrf_field() ?>
     <div class="row">
         <div class="col-md-3 mb-3">
@@ -55,6 +55,17 @@
         <div class="col-12 mb-3">
             <label class="form-label">Descripción</label>
             <textarea name="description" class="form-control" rows="3"><?= esc(old('description', $product['description'] ?? '')) ?></textarea>
+        </div>
+        <div class="col-12 mb-3">
+            <label class="form-label">Foto para el sitio público (opcional)</label>
+            <?php if (! empty($product['image_path'])): ?>
+                <div class="d-flex align-items-center mb-2" style="gap: 12px;">
+                    <img src="<?= base_url($product['image_path']) ?>" alt="" style="height: 90px; border-radius: 8px; object-fit: cover;">
+                    <label class="mb-0"><input type="checkbox" name="quitar_imagen" value="1"> Quitar foto</label>
+                </div>
+            <?php endif; ?>
+            <input type="file" name="image" class="form-control-file" accept="image/jpeg,image/png,image/webp">
+            <small class="text-muted">JPG, PNG o WEBP, máximo 8 MB. Se muestra en el catálogo funerario.</small>
         </div>
     </div>
 

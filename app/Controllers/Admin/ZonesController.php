@@ -12,6 +12,7 @@ class ZonesController extends BaseController
     public function __construct()
     {
         $this->zoneModel = new ZoneModel();
+        helper('form'); // las vistas usan form_open()
     }
 
     /**
@@ -32,6 +33,8 @@ class ZonesController extends BaseController
      */
     public function create()
     {
+        helper('form');
+
         $data = [
             'title' => 'Nueva Zona',
             'zone' => null,

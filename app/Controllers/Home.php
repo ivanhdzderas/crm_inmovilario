@@ -13,42 +13,76 @@ use CodeIgniter\HTTP\RedirectResponse;
 
 class Home extends BaseController
 {
-    public function index(): string
+    /** Portada: presenta las dos líneas (inmuebles y previsión funeraria) con destacados. */
+    public function index()
     {
-        $realEstateModel = new RealEstateModel();
-        $zoneModel = new ZoneModel();
-        $docCatalogModel = new ClientDocumentCatalogModel();
-        $photoModel = new RealEstatePhotosModel();
+        // Compatibilidad: los filtros antes vivían en la portada
+        $query = $this->request->getUri()->getQuery();
+        if ($query !== '' && array_intersect(array_keys($this->request->getGet() ?? []), ['zone_id', 'min_price', 'max_price', 'payment_method'])) {
+            return redirect()->to(site_url('inmuebles') . '?' . $query, 301);
+        }
 
-        $filters = [
-            'zone_id'        => $this->request->getGet('zone_id'),
-            'min_price'      => $this->request->getGet('min_price'),
-            'max_price'      => $this->request->getGet('max_price'),
-            'payment_method' => $this->request->getGet('payment_method'),
-        ];
+        $inmuebles = $this->enriquecerLista((new RealEstateModel())->getPublicCatalog());
+        usort($inmuebles, static fn ($a, $b) => strcmp((string) $b['created_at'], (string) $a['created_at']));
 
-        $results = $realEstateModel->getPublicCatalog($filters);
-
-        foreach ($results as $key => $property) {
-            $mainPhoto = $photoModel->where('real_estate_id', $property['id'])->orderBy('id', 'ASC')->first();
-            $results[$key]['main_photo_path'] = $mainPhoto ? $mainPhoto['file_path'] : null;
-            $results[$key]['project_slug'] = CatalogoHelper::slug($property['project_name'] ?? 'general');
-            $results[$key]['slug'] = CatalogoHelper::slug($property['name'] ?? 'inmueble');
-            $results[$key]['payment_methods_list'] = CatalogoHelper::parsePaymentMethods($property['payment_methods'] ?? null);
+        $paquetes = array_slice((new \App\Models\FuneralProductModel())->getPublicCatalog([]), 0, 50);
+        $planModel = new \App\Models\FuneralFinancingPlanModel();
+        foreach (array_slice($paquetes, 0, 3) as $i => $p) {
+            $paquetes[$i]['plans'] = $planModel->getByProduct((int) $p['id'], true);
         }
 
         return view('home', [
-            'realEstates'      => $results,
-            'zones'            => $zoneModel->asArray()->orderBy('name', 'ASC')->findAll() ?: [],
-            'payment_methods'  => $docCatalogModel->getPaymentMethods(),
-            'current_filters'  => $filters,
+            'title'          => sitio('site_name') . ' | Inmuebles y previsión funeraria',
+            'destacados'     => array_slice($inmuebles, 0, 6),
+            'totalInmuebles' => count($inmuebles),
+            'paquetes'       => array_slice($paquetes, 0, 3),
+            'totalPaquetes'  => count($paquetes),
+            'zonas'          => (new ZoneModel())->asArray()->orderBy('name', 'ASC')->findAll() ?: [],
+        ]);
+    }
+
+    /** Listado de inmuebles con filtros. */
+    public function inmuebles(): string
+    {
+        $filtros = [
+            'zone_id'        => (int) $this->request->getGet('zone_id') ?: null,
+            'project_id'     => (int) $this->request->getGet('project_id') ?: null,
+            'min_price'      => is_numeric($this->request->getGet('min_price')) ? (float) $this->request->getGet('min_price') : null,
+            'max_price'      => is_numeric($this->request->getGet('max_price')) ? (float) $this->request->getGet('max_price') : null,
+            // Se filtra por el nombre de la forma de pago (así se guarda en el inmueble)
+            'payment_method' => trim((string) $this->request->getGet('payment_method')) ?: null,
+        ];
+        $orden = (string) $this->request->getGet('orden');
+
+        $lista = $this->enriquecerLista((new RealEstateModel())->getPublicCatalog(array_filter($filtros, static fn ($v) => $v !== null)));
+        if ($orden === 'precio_asc') {
+            usort($lista, static fn ($a, $b) => $a['price'] <=> $b['price']);
+        } elseif ($orden === 'precio_desc') {
+            usort($lista, static fn ($a, $b) => $b['price'] <=> $a['price']);
+        } elseif ($orden === 'recientes') {
+            usort($lista, static fn ($a, $b) => strcmp((string) $b['created_at'], (string) $a['created_at']));
+        }
+
+        $formas = array_values(array_filter(
+            (new ClientDocumentCatalogModel())->getPaymentMethods(),
+            static fn ($m) => mb_strtolower((string) $m) !== 'todos'
+        ));
+
+        return view('inmuebles', [
+            'title'      => 'Inmuebles en venta | ' . sitio('site_name'),
+            'inmuebles'  => $lista,
+            'zonas'      => (new ZoneModel())->asArray()->orderBy('name', 'ASC')->findAll() ?: [],
+            'proyectos'  => (new ProyectosInmobiliariosModel())->asArray()->orderBy('name', 'ASC')->findAll() ?: [],
+            'formasPago' => $formas,
+            'filtros'    => $filtros,
+            'orden'      => $orden,
         ]);
     }
 
     public function aboutUs()
     {
         return view('about_us', [
-            'title' => 'Sobre Nosotros - Pacific Inmobiliaria',
+            'title' => 'Nosotros | ' . sitio('site_name'),
         ]);
     }
 
@@ -122,9 +156,7 @@ class Home extends BaseController
             return $redirect;
         }
 
-        return view('real_estates/public_technical_sheet', [
-            'realEstate' => $this->cargarDetalle((int) $propiedad['id']),
-        ]);
+        return $this->vistaFicha($this->cargarDetalle((int) $propiedad['id']));
     }
 
     public function publicTechnicalSheet($id = null)
@@ -146,7 +178,20 @@ class Home extends BaseController
             return redirect()->to(CatalogoHelper::urlInmueble($detalle));
         }
 
-        return view('real_estates/public_technical_sheet', ['realEstate' => $detalle]);
+        return $this->vistaFicha($detalle);
+    }
+
+    /** Ficha pública con título, descripción y foto para compartir en redes. */
+    private function vistaFicha(array $detalle): string
+    {
+        $foto = $detalle['photos'][0]['file_path'] ?? null;
+
+        return view('real_estates/public_technical_sheet', [
+            'realEstate'  => $detalle,
+            'title'       => $detalle['name'] . ' | ' . sitio('site_name'),
+            'descripcion' => character_limiter(strip_tags((string) ($detalle['description_general'] ?? '')), 155) ?: null,
+            'ogImagen'    => $foto ? base_url($foto) : null,
+        ]);
     }
 
     private function cargarDetalle(int $id): array

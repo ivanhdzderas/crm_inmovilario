@@ -1,4 +1,4 @@
-<?= $this->extend('template') ?>
+<?= $this->extend('public_layout') ?>
 
 <?= $this->section('title') ?>Términos y Condiciones<?= $this->endSection() ?>
 

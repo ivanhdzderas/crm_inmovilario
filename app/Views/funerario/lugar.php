@@ -1,44 +1,39 @@
 <?= $this->extend('public_layout') ?>
 <?= $this->section('content') ?>
-<div class="property-header">
+<section class="cabecera-pagina">
     <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="<?= base_url('funerario') ?>">Funerario</a></li>
-                <li class="breadcrumb-item active"><?= esc($lugar['name']) ?></li>
-            </ol>
+        <nav class="migas" aria-label="Ruta">
+            <a href="<?= base_url('/') ?>">Inicio</a><span>/</span>
+            <a href="<?= base_url('funerario') ?>">Previsión funeraria</a><span>/</span>
+            <?= esc($lugar['name']) ?>
         </nav>
-        <h1 class="display-6 text-pacific"><?= esc($lugar['name']) ?></h1>
-        <p class="text-muted"><i class="fa fa-location-dot me-1"></i><?= esc($lugar['address'] ?? '') ?></p>
+        <span class="eyebrow">Lugar de descanso</span>
+        <h1><?= esc($lugar['name']) ?></h1>
+        <?php if (! empty($lugar['address'])): ?><p><i class="fa-solid fa-location-dot me-1"></i><?= esc($lugar['address']) ?></p><?php endif; ?>
+        <?php if (! empty($lugar['description'])): ?><p class="mt-2" style="max-width: 760px;"><?= esc($lugar['description']) ?></p><?php endif; ?>
+        <?php if (! empty($funerarias)): ?>
+            <div class="chips mt-3">
+                <?php foreach ($funerarias as $f): ?><span class="chip chip-gris"><i class="fa-solid fa-building-columns"></i><?= esc($f['name']) ?></span><?php endforeach; ?>
+            </div>
+        <?php endif; ?>
     </div>
-</div>
+</section>
 
-<div class="container pb-5">
-    <?php if (! empty($funerarias)): ?>
-        <div class="mb-4">
-            <h3 class="section-title">Funerarias en este lugar</h3>
-            <div class="d-flex flex-wrap gap-2">
-                <?php foreach ($funerarias as $f): ?>
-                    <span class="badge payment-badge"><?= esc($f['name']) ?></span>
+<section class="seccion pt-4">
+    <div class="container">
+        <?php if (empty($productos)): ?>
+            <div class="vacio">
+                <i class="fa-solid fa-dove d-block"></i>
+                <p class="mb-3">Por ahora no hay paquetes publicados en este lugar.</p>
+                <a class="btn btn-arena" href="<?= base_url('/') ?>#contacto">Quiero información</a>
+            </div>
+        <?php else: ?>
+            <div class="row g-4">
+                <?php foreach ($productos as $p): ?>
+                    <div class="col-sm-6 col-lg-4"><?= view('partials/tarjeta_paquete', ['p' => $p]) ?></div>
                 <?php endforeach; ?>
             </div>
-        </div>
-    <?php endif; ?>
-
-    <h3 class="section-title">Paquetes disponibles</h3>
-    <div class="row">
-        <?php foreach ($productos as $p): ?>
-            <div class="col-md-6 mb-3">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <p class="small text-muted mb-1"><?= esc($p['home_name']) ?> · <?= esc($p['type_name'] ?? '') ?></p>
-                        <h5><?= esc($p['name']) ?></h5>
-                        <p class="property-price"><?= formato_precio_funerario($p['base_price']) ?></p>
-                        <a href="<?= url_funerario_producto($p) ?>" class="btn btn-main btn-sm rounded-pill">Ver financiamiento</a>
-                    </div>
-                </div>
-            </div>
-        <?php endforeach; ?>
+        <?php endif; ?>
     </div>
-</div>
+</section>
 <?= $this->endSection() ?>

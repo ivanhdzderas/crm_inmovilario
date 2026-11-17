@@ -8,6 +8,8 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'Home::index');
 
 // === CATÁLOGO PÚBLICO (URLs amigables) — deben estar registradas en producción ===
+$routes->get('inmuebles', 'Home::inmuebles');
+$routes->post('contacto', 'Leads::guardar');
 $routes->get('catalogo', 'Home::catalogo');
 $routes->get('catalogo/(:segment)/(:segment)', 'Home::catalogoInmueble/$1/$2');
 $routes->get('desarrollo/(:segment)/(:segment)', 'Home::fichaDesarrollo/$1/$2');

@@ -354,8 +354,12 @@ class RealEstatesController extends BaseController
                 'price'               => $this->request->getPost('price'),
                 'payment_methods'     => !empty($paymentMethods) ? json_encode($paymentMethods) : null,
                 'google_maps_link'    => $googleMapsLink,
-                'project_id'          => $this->request->getPost('project_id'),
+                'address'             => trim((string) $this->request->getPost('address')) ?: null,
+                'project_id'          => $this->request->getPost('project_id') ?: null,
                 'zone_id'             => $this->request->getPost('zone_id') ?: null,
+                // Antes se ignoraba el campo "Estado" del formulario
+                'status'              => in_array($this->request->getPost('status'), ['Disponible', 'En apartado', 'Vendido'], true)
+                    ? $this->request->getPost('status') : 'Disponible',
                 'created_by_user_id'  => session()->get('user_id'),
                 'updated_by_user_id'  => session()->get('user_id'),
             ];
@@ -481,7 +485,8 @@ class RealEstatesController extends BaseController
                 'price'               => $this->request->getPost('price'),
                 'payment_methods'     => !empty($paymentMethods) ? json_encode($paymentMethods) : null,
                 'google_maps_link'    => $googleMapsLink,
-                'project_id'          => $this->request->getPost('project_id'),
+                'address'             => trim((string) $this->request->getPost('address')) ?: null,
+                'project_id'          => $this->request->getPost('project_id') ?: null,
                 'zone_id'             => $this->request->getPost('zone_id') ?: null,
                 'updated_by_user_id'  => session()->get('user_id'),
             ];

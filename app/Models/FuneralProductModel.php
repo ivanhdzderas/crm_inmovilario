@@ -12,7 +12,7 @@ class FuneralProductModel extends Model
     protected $returnType    = 'array';
     protected $allowedFields = [
         'clave', 'name', 'slug', 'funeral_location_id', 'funeral_home_id',
-        'product_type_id', 'base_price', 'description', 'status',
+        'product_type_id', 'base_price', 'description', 'image_path', 'status',
     ];
     protected $useTimestamps = true;
 
